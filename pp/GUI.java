@@ -1,4 +1,5 @@
-package pp;
+
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -232,7 +233,7 @@ public class GUI extends BorderPane {
 		topBox.getChildren().addAll(title, description);
 		topBox.setAlignment(Pos.CENTER);
 
-		BackgroundImage myBI = new BackgroundImage(new Image("https://st.depositphotos.com/1026456/1245/v/450/depositphotos_12458533-stock-illustration-stick-figure.jpg", WIDTH, HEIGHT, false, true),
+		BackgroundImage myBI = new BackgroundImage(new Image("Scene1BackGround.jpg", WIDTH, HEIGHT, false, true),
 				BackgroundRepeat.ROUND, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT);
 
 		topBox.setBackground(new Background(myBI));
