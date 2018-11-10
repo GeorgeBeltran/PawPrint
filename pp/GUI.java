@@ -1,3 +1,4 @@
+package pp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +35,10 @@ public class GUI extends BorderPane {
 	private VBox loginScene;
 	private VBox chooseScene;
 	private VBox donateDogScene;
+	private VBox adoptDogScene;
 	//private VBox scene3;
-	private final int HEIGHT = 500;
-	private final int WIDTH = 500;
+	private final int HEIGHT = 750;
+	private final int WIDTH = 750;
 
 	// Setting for main program window
 	public GUI() {
@@ -45,8 +47,8 @@ public class GUI extends BorderPane {
 		// this.getStyleClass().add("body");
 		createLogin();
 		createChooseScene();
-		//donateDogScene();
-		//adoptDogScene();
+		donateDogScene();
+		adoptDogScene();
 		//setScene1BackGround();
 		setTitle();
 	}
@@ -110,43 +112,109 @@ public class GUI extends BorderPane {
 	}
 
 	// Create Scene 2 (Donate a Dog Module) Need help to get this to display
-	public void donateDogScene() {
-		donateDogScene = new VBox();
+		public void donateDogScene() {
+			donateDogScene = new VBox();
+			
+			//Size
+			Label dogSizeLabel = new Label("Dog Size");
+			ComboBox<String> dogSizeComboBox = new ComboBox<>();
+			dogSizeComboBox.getItems().addAll("","Small","Medium","Large");
+			HBox dogSizeHBox = new HBox();
+			dogSizeHBox.getChildren().addAll(emptyVBoxPrinter(), dogSizeLabel, emptyVBoxPrinter(), dogSizeComboBox, emptyVBoxPrinter());
+			dogSizeHBox.setAlignment(Pos.BASELINE_CENTER);
+			
+			//Breed
+			Label dogBreedLabel = new Label("Dog Size");
+			ComboBox<String> dogBreedComboBox = new ComboBox<>();
+			dogBreedComboBox.getItems().addAll("","A","B","C");
+			HBox dogBreedHBox = new HBox();
+			dogBreedHBox.getChildren().addAll(emptyVBoxPrinter(), dogBreedLabel, emptyVBoxPrinter(), dogBreedComboBox, emptyVBoxPrinter());
+			dogBreedHBox.setAlignment(Pos.BASELINE_CENTER);
+			
+			//Gender
+			Label dogGenderLabel = new Label("Dog Size");
+			ComboBox<String> dogGenderCombobox = new ComboBox<>();
+			dogGenderCombobox.getItems().addAll("","Male","Female");
+			HBox dogGenderHBox = new HBox();
+			dogGenderHBox.getChildren().addAll(emptyVBoxPrinter(), dogGenderLabel, emptyVBoxPrinter(), dogGenderCombobox, emptyVBoxPrinter());
+			dogGenderHBox.setAlignment(Pos.BASELINE_CENTER);
+			
+			//Color
+			Label dogColorLabel = new Label("Dog Color");
+			ComboBox<String> dogColorComboBox = new ComboBox<>();
+			dogColorComboBox.getItems().addAll("","Brown","Black","White");
+			HBox dogColorHBox = new HBox();
+			dogColorHBox.getChildren().addAll(emptyVBoxPrinter(), dogColorLabel, emptyVBoxPrinter(), dogColorComboBox, emptyVBoxPrinter());
+			dogColorHBox.setAlignment(Pos.BASELINE_CENTER);
+			
+			//Age
+			Label dogAgeLabel = new Label("Dog Size");
+			ComboBox<String> dogAgeComboBox = new ComboBox<>();
+			dogAgeComboBox.getItems().add("");
+			for (int i = 1; i < 21; i++)
+			{
+				dogAgeComboBox.getItems().add(Integer.toString(i));
+			}
+			dogAgeComboBox.getSelectionModel().select("");
+			HBox dogAgeHBox = new HBox();
+			dogAgeHBox.getChildren().addAll(emptyVBoxPrinter(), dogAgeLabel, emptyVBoxPrinter(), dogAgeComboBox, emptyVBoxPrinter());
+			dogAgeHBox.setAlignment(Pos.BASELINE_CENTER);
+
+			
+			
+			// Button and Label for going back to loginScene
+			Label loginSceneLabel = new Label("Back To Login");
+			Button backToLoginButton = new Button("Click Here!!");
+			goToLoginScene(backToLoginButton);
+			// Button and Label for going to next Scene
+			Label goToInvoiceLabel = new Label("Go to Invoice");
+			Button goToInvoiceButton = new Button("Click Here!!");
+			goToLoginScene(goToInvoiceButton);
+			HBox buttonsHBox = new HBox();
+			buttonsHBox.getChildren().addAll(emptyVBoxPrinter(),loginSceneLabel, emptyVBoxPrinter(), backToLoginButton, 
+					emptyVBoxPrinter(), goToInvoiceLabel, emptyVBoxPrinter(), goToInvoiceButton, emptyVBoxPrinter());
+			buttonsHBox.setAlignment(Pos.BASELINE_CENTER);
+
+			
+			// All that is displayed is here
+			donateDogScene.getChildren().addAll(emptyHBoxPrinter(), dogSizeHBox, emptyHBoxPrinter(), dogBreedHBox,
+					emptyHBoxPrinter(), dogGenderHBox, emptyHBoxPrinter(), dogColorHBox,  
+					emptyHBoxPrinter(), dogAgeHBox, emptyHBoxPrinter(), emptyHBoxPrinter(), buttonsHBox, emptyHBoxPrinter());
+			donateDogScene.setAlignment(Pos.CENTER);
+			donateDogScene.setAlignment(Pos.TOP_CENTER);
+			
+		}
+
+	// Create Scene 3 (Adopt a Dog Module)
+	public void adoptDogScene() {
+		adoptDogScene = new VBox();
 		
 		//Size
 		Label dogSizeLabel = new Label("Dog Size");
 		ComboBox<String> dogSizeComboBox = new ComboBox<>();
 		dogSizeComboBox.getItems().addAll("","Small","Medium","Large");
-		HBox dogSizeHBox = new HBox();
-		dogSizeHBox.getChildren().addAll(emptyVBoxPrinter(), dogSizeLabel, emptyVBoxPrinter(), dogSizeComboBox, emptyVBoxPrinter());
-		dogSizeHBox.setAlignment(Pos.BASELINE_CENTER);
 		
 		//Breed
-		Label dogBreedLabel = new Label("Dog Size");
+		Label dogBreedLabel = new Label("Dog Breed");
 		ComboBox<String> dogBreedComboBox = new ComboBox<>();
 		dogBreedComboBox.getItems().addAll("","A","B","C");
-		HBox dogBreedHBox = new HBox();
-		dogBreedHBox.getChildren().addAll(emptyVBoxPrinter(), dogBreedLabel, emptyVBoxPrinter(), dogBreedComboBox, emptyVBoxPrinter());
-		dogBreedHBox.setAlignment(Pos.BASELINE_CENTER);
+		HBox dogSizeAndBreedHBox = new HBox();
+		dogSizeAndBreedHBox.getChildren().addAll( dogSizeLabel, dogSizeComboBox, emptyVBoxPrinter(),
+				dogBreedLabel,  dogBreedComboBox, emptyVBoxPrinter());
+		dogSizeAndBreedHBox.setAlignment(Pos.BASELINE_CENTER);
 		
 		//Gender
-		Label dogGenderLabel = new Label("Dog Size");
+		Label dogGenderLabel = new Label("Dog Gender");
 		ComboBox<String> dogGenderCombobox = new ComboBox<>();
 		dogGenderCombobox.getItems().addAll("","Male","Female");
-		HBox dogGenderHBox = new HBox();
-		dogGenderHBox.getChildren().addAll(emptyVBoxPrinter(), dogGenderLabel, emptyVBoxPrinter(), dogGenderCombobox, emptyVBoxPrinter());
-		dogGenderHBox.setAlignment(Pos.BASELINE_CENTER);
 		
 		//Color
 		Label dogColorLabel = new Label("Dog Color");
 		ComboBox<String> dogColorComboBox = new ComboBox<>();
 		dogColorComboBox.getItems().addAll("","Brown","Black","White");
-		HBox dogColorHBox = new HBox();
-		dogColorHBox.getChildren().addAll(emptyVBoxPrinter(), dogColorLabel, emptyVBoxPrinter(), dogColorComboBox, emptyVBoxPrinter());
-		dogColorHBox.setAlignment(Pos.BASELINE_CENTER);
 		
 		//Age
-		Label dogAgeLabel = new Label("Dog Size");
+		Label dogAgeLabel = new Label("Dog Age");
 		ComboBox<String> dogAgeComboBox = new ComboBox<>();
 		dogAgeComboBox.getItems().add("");
 		for (int i = 1; i < 21; i++)
@@ -154,9 +222,11 @@ public class GUI extends BorderPane {
 			dogAgeComboBox.getItems().add(Integer.toString(i));
 		}
 		dogAgeComboBox.getSelectionModel().select("");
-		HBox dogAgeHBox = new HBox();
-		dogAgeHBox.getChildren().addAll(emptyVBoxPrinter(), dogAgeLabel, emptyVBoxPrinter(), dogAgeComboBox, emptyVBoxPrinter());
-		dogAgeHBox.setAlignment(Pos.BASELINE_CENTER);
+		HBox dogGenderAndColorAndAgeHBox = new HBox();
+		dogGenderAndColorAndAgeHBox.getChildren().addAll(dogGenderLabel, dogGenderCombobox, emptyVBoxPrinter(), 
+				dogColorLabel, dogColorComboBox, emptyVBoxPrinter(),
+				dogAgeLabel, dogAgeComboBox, emptyVBoxPrinter());
+		dogGenderAndColorAndAgeHBox.setAlignment(Pos.BASELINE_CENTER);
 
 		
 		
@@ -165,97 +235,22 @@ public class GUI extends BorderPane {
 		Button backToLoginButton = new Button("Click Here!!");
 		goToLoginScene(backToLoginButton);
 		// Button and Label for going to next Scene
-		Label goToInvoiceLabel = new Label("Go to Invoice");
-		Button goToInvoiceButton = new Button("Click Here!!");
-		goToLoginScene(goToInvoiceButton);
+		Label goToListLabel = new Label("Go to List");
+		Button goToListButton = new Button("Click Here!!");
+		goToLoginScene(goToListButton);
 		HBox buttonsHBox = new HBox();
-		buttonsHBox.getChildren().addAll(emptyVBoxPrinter(),loginSceneLabel, emptyVBoxPrinter(), backToLoginButton, 
-				emptyVBoxPrinter(), goToInvoiceLabel, emptyVBoxPrinter(), goToInvoiceButton, emptyVBoxPrinter());
+		buttonsHBox.getChildren().addAll(loginSceneLabel, backToLoginButton, 
+				emptyVBoxPrinter(), goToListLabel, goToListButton, emptyVBoxPrinter());
 		buttonsHBox.setAlignment(Pos.BASELINE_CENTER);
 
 		
 		// All that is displayed is here
-		donateDogScene.getChildren().addAll(emptyHBoxPrinter(), dogSizeHBox, emptyHBoxPrinter(), dogBreedHBox,
-				emptyHBoxPrinter(), dogGenderHBox, emptyHBoxPrinter(), dogColorHBox,  
-				emptyHBoxPrinter(), dogAgeHBox, emptyHBoxPrinter(), emptyHBoxPrinter(), buttonsHBox, emptyHBoxPrinter());
-		donateDogScene.setAlignment(Pos.CENTER);
-		donateDogScene.setAlignment(Pos.TOP_CENTER);
-		
+		adoptDogScene.getChildren().addAll(emptyHBoxPrinter(), dogSizeAndBreedHBox,
+				emptyHBoxPrinter(), dogGenderAndColorAndAgeHBox,
+				emptyHBoxPrinter(), emptyHBoxPrinter(), buttonsHBox, emptyHBoxPrinter());
+		adoptDogScene.setAlignment(Pos.CENTER);
+		adoptDogScene.setAlignment(Pos.TOP_CENTER);
 	}
-
-	// Create Scene 3 
-	public void createScene3() {
-		donateDogScene = new VBox();
-
-		// Make horizontal box for each option
-		HBox horizontalBox3 = new HBox(8);
-		// horizontalBox1.getStyleClass().add("boxes");
-
-		// Label "Label for Dog Work"
-		Label doDog = new Label("Let's Do Dog Work");
-		// doDog.getStyleClass().add("labels");
-		
-		//size, breed, gender, color, age
-		Label dogSizeLabel = new Label("Dog Size");
-		Label dogBreedLabel = new Label("Dog Breed");
-		Label dogGenderLabel = new Label("Dog Gender");
-		Label dogColorLabel = new Label("Dog Color");
-		Label dogAgeLabel = new Label("Dog Age");
-
-		// Fill "Body Type" ChoiceBox
-		//dogGenderChoiceBox.getItems().addAll("", "Male", "Female");
-		//dogGenderChoiceBox.getSelectionModel().select("");
-
-		HBox bodyTypePictureBox1 = new HBox(8);
-		bodyTypePictureBox1.getChildren().clear();
-		bodyTypePictureBox1.setPrefHeight(100);
-
-		//Group scene1Group1 = new Group();
-		//scene1Group1.getChildren().addAll(bodyTypePictureBox1);
-		/*
-		 * //Images for scene1 Image image1 = new Image( "Image1.jpg"); ImageView
-		 * imageView1 = imageViewSetup(image1);
-		 * 
-		 * Image image2 = new Image( "Image2.png"); ImageView imageView2 =
-		 * imageViewSetup(image2);
-		 * 
-		 * Image image3 = new Image( "Image3.png"); ImageView imageView3 =
-		 * imageViewSetup(image3);
-		 */
-		/*
-		 * Node[] array = { invisibleImage(), invisibleImage(), invisibleImage(),
-		 * invisibleImage() }; scene1Group1.getChildren().clear();
-		 * resetHBox(bodyTypePictureBox1, array);
-		 * scene1Group1.getChildren().addAll(bodyTypePictureBox1);
-		 */
-
-		// Button and Label for going back to loginScene
-		Label loginSceneLabel = new Label("Back To Login");
-		Button backToLoginButton = new Button("Click Here!!");
-		goToLoginScene(backToLoginButton);
-
-		// Button and Label for going to next Scene
-		Label scene3Label = new Label("Next Step");
-		Button scene3Button = new Button("Click Here!!");
-		goToLoginScene(backToLoginButton);
-
-		HBox scene1ButtonRow1HBox = new HBox();
-		scene1ButtonRow1HBox.getChildren().addAll(loginSceneLabel, backToLoginButton, emptyVBoxPrinter(), scene3Label,
-				scene3Button);
-		scene1ButtonRow1HBox.setAlignment(Pos.BASELINE_CENTER);
-
-		// Put each label ComboBox into a HorizontalBox
-		horizontalBox3.getChildren().addAll(doDog);
-		horizontalBox3.setAlignment(Pos.BASELINE_CENTER);
-
-		//scene1.getChildren().addAll(emptyHBoxPrinter(), horizontalBox3, emptyHBoxPrinter(), scene1Group1,
-				//emptyHBoxPrinter(), scene1ButtonRow1HBox, emptyHBoxPrinter(), emptyHBoxPrinter());
-		//scene1.setAlignment(Pos.CENTER);
-		//scene1.setAlignment(Pos.TOP_CENTER);
-		// this.setCenter(scene1);
-
-	}
-
 	// Return invisible Image
 	public ImageView invisibleImage() {
 		Image image = new Image(
@@ -347,9 +342,9 @@ public class GUI extends BorderPane {
 
 	// Go to ListingsScene
 	private void goToAdoptDogScene(Button button) {
-		//button.setOnAction(e -> {
-			//this.setCenter(scene2);		
-		//});
+		button.setOnAction(e -> {
+			this.setCenter(adoptDogScene);		
+		});
 	}
 
 	// Reset HorizontalBox for new Image
