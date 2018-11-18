@@ -1,7 +1,9 @@
-//To Read=In textfile
+//To Read and Write In textfile
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 // For java SQL and MySQL connection
@@ -18,6 +20,7 @@ import java.util.regex.Pattern;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.print.PrinterJob;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -49,7 +52,7 @@ import javafx.scene.text.TextAlignment;
 
 public class GUI extends BorderPane {
 
-	private String invoiceNumber = "0000000000"; 
+	private int invoiceNumber = readInvoiceFile();
 	
 	// Scenes sceneAdjust
 	private VBox loginScene;
@@ -79,7 +82,7 @@ public class GUI extends BorderPane {
 	Label phoneLabel1 = new Label("Phone");
 	TextField phoneTextField1 = new TextField();
 
-	//dogDonateInvoiceObjects
+	//dogInvoiceObjects
 	TextArea donateResultTextField = new TextArea();
 	
 	//dogAdoptSceneObjects
@@ -291,11 +294,18 @@ public class GUI extends BorderPane {
 
 		donateResultTextField.setEditable(false);
 		donateResultTextField.setPrefHeight(550);
+		donateResultTextField.setPrefRowCount(9);
+		donateResultTextField.setPrefColumnCount(2);
+		donateResultTextField.setPrefWidth(100);
 		Button backToLoginButton = new Button("Back To Login");
 		backToLoginButton.setAlignment(Pos.CENTER);
 		goToLoginScene(backToLoginButton);
+		Button printInvoiceButton = new Button("Print Invoice");
+		printInvoiceButton.setAlignment(Pos.CENTER);
+		printInvoiceButton.setOnAction(e -> print(donateResultTextField));
+		
 		HBox buttonsHBox = new HBox();
-		buttonsHBox.getChildren().addAll(emptyVBoxPrinter(), backToLoginButton, emptyVBoxPrinter());
+		buttonsHBox.getChildren().addAll(emptyVBoxPrinter(), backToLoginButton, emptyVBoxPrinter(), printInvoiceButton, emptyVBoxPrinter());
 		buttonsHBox.setAlignment(Pos.CENTER);
 
 		donateInvoiceScene.getChildren().addAll(donateResultTextField,buttonsHBox);
@@ -461,29 +471,19 @@ public class GUI extends BorderPane {
 					alert0.setHeaderText(null);
 					alert0.setContentText("All input fields must be filled.");
 					alert0.showAndWait();
-					//this.setCenter(donateInvoiceScene);
-					// Erase bottom
-					/*System.out.println(dogBreedComboBox1.getSelectionModel().getSelectedItem()
-							+ dogGenderComboBox1.getSelectionModel().getSelectedItem()
-							+ dogSizeComboBox1.getSelectionModel().getSelectedItem()
-							+ dogColorComboBox1.getSelectionModel().getSelectedItem()
-							+ dogAgeComboBox1.getSelectionModel().getSelectedItem()
-							+ ownerTextField1.getText().toString() + emailTextField1.getText().toString()
-							+ phoneTextField1.getText().toString() + "1");*/
-					// end of bottom
+
 				} else {
 					String phoneString = phoneTextField1.getText().toString();
+					String invoice = "Invoice: " + "\t\t\t" + String.format("%010d%n", invoiceNumber) + "Dog Breed:" + "\t\t\t"
+							+ dogBreedComboBox1.getSelectionModel().getSelectedItem() + "\n" + "Dog Gender:" + "\t\t"
+							+ dogSizeComboBox1.getSelectionModel().getSelectedItem() + "\n" + "Dog Gender:" + "\t\t"
+							+ dogGenderComboBox1.getSelectionModel().getSelectedItem() + "\n" + "Dog Color:" + "\t\t\t"
+							+ dogColorComboBox1.getSelectionModel().getSelectedItem() + "\n" + "Dog Age:" + "\t\t\t"
+							+ dogAgeComboBox1.getSelectionModel().getSelectedItem() + " Years Old" + "\n"
+							+ "Owner Name" + "\t\t" + ownerTextField1.getText().toString() + "\n" + "Email:" + "\t\t\t"
+							+ emailTextField1.getText().toString() + "\n" + "Owner's Phone #:" + "\t"
+							+ "(" + phoneString.substring(0,3) + ")-" + phoneString.substring(3,6) + "-" + phoneString.substring(6);
 
-
-					//Erase Bottom
-					/*System.out.println(dogBreedComboBox1.getSelectionModel().getSelectedItem()
-							+ dogGenderComboBox1.getSelectionModel().getSelectedItem()
-							+ dogSizeComboBox1.getSelectionModel().getSelectedItem()
-							+ dogColorComboBox1.getSelectionModel().getSelectedItem()
-							+ dogAgeComboBox1.getSelectionModel().getSelectedItem()
-							+ ownerTextField1.getText().toString() + emailTextField1.getText().toString()
-							+ phoneTextField1.getText().toString() + "2");*/
-					// End of bottom
 					boolean phonePass = isRealPhoneNum(phoneTextField1.getText().toString());
 					boolean emailPass = isValidEmail(emailTextField1.getText().toString());
 					if (phonePass == false)
@@ -504,16 +504,6 @@ public class GUI extends BorderPane {
 					}
 
 					if (emailPass == true && phonePass == true) {
-						String invoice = "Invoice: " + "\t\t\t" + invoiceNumber + "\n" + "Dog Breed:" + "\t\t\t"
-								+ dogBreedComboBox1.getSelectionModel().getSelectedItem() + "\n" + "Dog Gender:" + "\t\t"
-								+ dogSizeComboBox1.getSelectionModel().getSelectedItem() + "\n" + "Dog Gender:" + "\t\t"
-								+ dogGenderComboBox1.getSelectionModel().getSelectedItem() + "\n" + "Dog Color:" + "\t\t\t"
-								+ dogColorComboBox1.getSelectionModel().getSelectedItem() + "\n" + "Dog Age:" + "\t\t\t"
-								+ dogAgeComboBox1.getSelectionModel().getSelectedItem() + " Years Old" + "\n"
-								+ "Owner Name" + "\t\t" + ownerTextField1.getText().toString() + "\n" + "Email:" + "\t\t\t"
-								+ emailTextField1.getText().toString() + "\n" + "Owner's Phone #:" + "\t"
-								+ "(" + phoneString.substring(0,3) + ")-" + phoneString.substring(3,6) + "-" + phoneString.substring(6);
-						
 						donateResultTextField.setText(invoice);
 						this.setCenter(donateInvoiceScene);
 						insertIntoDataBase(dogBreedComboBox1.getSelectionModel().getSelectedItem(),
@@ -523,13 +513,15 @@ public class GUI extends BorderPane {
 								dogAgeComboBox1.getSelectionModel().getSelectedItem(),
 								ownerTextField1.getText().toString(), emailTextField1.getText().toString(),
 								phoneTextField1.getText().toString());
+						
+						overWriteInvoice(invoiceNumber);
+						invoiceNumber++;
 					}
 				}
 			});
 		}
 		else if (choice == "adopt")
 		{
-			//donateResultTextField.setText("");
 
 			button.setOnAction(e -> {
 				Dog k9 = (Dog) adoptDogTableView.getSelectionModel().getSelectedItem();
@@ -543,7 +535,7 @@ public class GUI extends BorderPane {
 				System.out.println(k9.getEmail());
 				System.out.println(k9.getPhone());
 				
-				String invoice = "Invoice: " + "\t\t\t" + invoiceNumber + "\n" + "Dog Breed:" + "\t\t\t"
+				String invoice = "Invoice: " + "\t\t\t" + String.format("%010d%n", invoiceNumber) + "Dog Breed:" + "\t\t\t"
 						+ k9.getBreed() + "\n" + "Dog Gender:" + "\t\t"
 						+ k9.getGender() + "\n" + "Dog Size:" + "\t\t\t"
 						+ k9.getSize() + "\n" + "Dog Color:" + "\t\t\t"
@@ -559,6 +551,9 @@ public class GUI extends BorderPane {
 						k9.getAge(),k9.getOwnerName(),k9.getEmail(),k9.getPhone());
 				
 				this.setCenter(donateInvoiceScene);
+				
+				overWriteInvoice(invoiceNumber);
+				invoiceNumber++;
 			});
 		}
 	}
@@ -1150,6 +1145,7 @@ public class GUI extends BorderPane {
 	{
 		boolean numIsDigit = true;
 		System.out.println(num);
+	    System.out.println(Long.parseLong(num));
 
 		try{
 		    long number = Long.parseLong(num);
@@ -1158,17 +1154,7 @@ public class GUI extends BorderPane {
 		    }
 		    else {
 		        System.out.println("Invalid Phone!");
-		        numIsDigit = false;
 		    }
-		    if ( Long.toString(number).length() < 10) {
-		        System.out.println("INValid phone number!");
-		        numIsDigit = false;
-		    }
-		    if ( Long.toString(number).length() > 10) {
-		        System.out.println("INValid phone number!");
-		        numIsDigit = false;
-		    }
-
 		}
 		catch (NumberFormatException ex) {
 			System.out.println("Didn't work");
@@ -1190,4 +1176,75 @@ public class GUI extends BorderPane {
         return pat.matcher(email).matches(); 
     } 
     
+    private void print(Node node) {
+        System.out.println("Creating a printer job...");
+
+        PrinterJob job = PrinterJob.createPrinterJob();
+        if (job != null && job.showPrintDialog(node.getScene().getWindow())){
+            boolean success = job.printPage(node);
+            if (success) {
+                job.endJob();
+            }
+        }
+      }
+    
+	public int readInvoiceFile() {
+		int setInvoiceNumber = 0;
+
+		FileReader fileReader = null;
+		try {
+			fileReader = new FileReader("src\\Invoice.txt");
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		BufferedReader bufferedReader = new BufferedReader(fileReader);
+		List<String> lines = new ArrayList<String>();
+		String line = null;
+
+		try {
+			while ((line = bufferedReader.readLine()) != null) {
+				lines.add(line);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		try {
+			bufferedReader.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		String[] i = lines.toArray(new String[lines.size()]);
+
+		if (i.length == 1) {
+			setInvoiceNumber = Integer.parseInt(i[0]);
+			System.out.println(setInvoiceNumber);
+		} else {
+			System.out.println(88888888);
+		}
+
+		return setInvoiceNumber;
+	}
+	
+	public void overWriteInvoice(int Invoice)
+	{
+		File fold=new File("src\\Invoice.txt");
+		fold.delete();
+		File fnew=new File("src\\Invoice.txt");
+		String source = Integer.toString(invoiceNumber);
+		System.out.println(source);
+
+		try {
+		    FileWriter f2 = new FileWriter(fnew, false);
+		    f2.write(source);
+		    f2.close();
+		} catch (IOException e) {
+		    e.printStackTrace();
+		}        
+	}
 }
