@@ -53,9 +53,9 @@ public class SQLconnect extends HttpServlet {
 //Change cs3220stu06 to your credentials
         	String url = "jdbc:mysql://cs3.calstatela.edu/cs3220stu06";
         	//Change cs3220stu06 to your credentials        	
-    		String username = "cs3220stu06";
+    		String username = "cs3220stuXX";
     		//Change password to your credentials
-    		String password = /* Your Password Here */ 	"0aO2oJo2";
+    		String password = /* Your Password Here */ 	"XXXX";
     	
     		// Connect to the database
     		c = DriverManager.getConnection(url, username, password);
