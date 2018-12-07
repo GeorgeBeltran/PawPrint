@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.text.Font?>
+	
+<AnchorPane prefHeight="400.0" prefWidth="900.0" style="-fx-background-color: #007fff;" xmlns:fx="http://javafx.com/fxml/1" fx:controller="modules.PractController">
+	<!-- TODO Add Nodes -->
+	<children>
+      <ImageView fitHeight="65.0" fitWidth="78.0" layoutX="269.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="http://i66.tinypic.com/k0frdw.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="35.0" fitWidth="34.0" layoutX="185.0" layoutY="170.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="http://i66.tinypic.com/jtqjwy.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="35.0" fitWidth="34.0" layoutX="185.0" layoutY="246.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="http://i65.tinypic.com/vr3ku0.png" />
+         </image>
+      </ImageView>
+      <Label layoutX="258.0" layoutY="79.0" prefHeight="35.0" prefWidth="98.0" text="PawPrint">
+         <font>
+            <Font name="System Italic" size="21.0" />
+         </font>
+      </Label>
+      <Button layoutX="269.0" layoutY="346.0" mnemonicParsing="false" style="-fx-background-color: #00ddff;" text="Login" onAction="#switchScene"/>
+      
+      <Label layoutX="220.0" layoutY="298.0" prefHeight="17.0" prefWidth="151.0" text="Forgot Your Password?" underline="true" />
+      <ImageView fitHeight="34.0" fitWidth="34.0" layoutX="185.0" layoutY="297.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="http://i68.tinypic.com/2wec87o.png" />
+         </image>
+      </ImageView>
+      <TextField layoutX="224.0" layoutY="174.0" promptText="Username" style="-fx-background-color: #d8e7ff;" />
+      <TextField layoutX="224.0" layoutY="250.0" promptText="Password" style="-fx-background-color: #d8e7ff;" />
+   </children>
+</AnchorPane>
