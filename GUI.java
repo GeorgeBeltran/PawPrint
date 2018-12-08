@@ -1,3 +1,6 @@
+package modules;
+
+
 //To Read and Write In textfile
 import java.io.BufferedReader;
 import java.io.File;
@@ -6,11 +9,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-// For java SQL and MySQL connection
+//For java SQL and MySQL connection
 import java.sql.*;
 import com.mysql.cj.xdevapi.Statement;
 
-// For JavaFx tableview
+import javafx.animation.AnimationTimer;
+//For JavaFx tableview
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -18,16 +22,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.print.PrinterJob;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
@@ -48,80 +53,61 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 
+@SuppressWarnings("unused")
 public class GUI extends BorderPane {
 
-	private int invoiceNumber = readInvoiceFile();
+	private static int invoiceNumber = readInvoiceFile();
 	
 	// Scenes sceneAdjust
-	private VBox loginScene;
-	private VBox chooseScene;
-	private VBox donateDogScene;
-	private VBox donateInvoiceScene;
-	private VBox adoptDogScene;
-	private VBox adoptDogResultScene;
+	private static VBox loginScene;
+
 	private final int HEIGHT = 640;
 	private final int WIDTH = 640;
 	
-	//dogDonateSceneObjects
-	Label dogBreedLabel1 = new Label("Dog Breed");
-	ComboBox<String> dogBreedComboBox1 = new ComboBox<>();
-	Label dogGenderLabel1 = new Label("Dog Gender");
-	ComboBox<String> dogGenderComboBox1 = new ComboBox<>();
-	Label dogSizeLabel1 = new Label("Dog Size");
-	ComboBox<String> dogSizeComboBox1 = new ComboBox<>();
-	Label dogColorLabel1 = new Label("Dog Color");
-	ComboBox<String> dogColorComboBox1 = new ComboBox<>();
-	Label dogAgeLabel1 = new Label("Dog Age");
-	ComboBox<String> dogAgeComboBox1 = new ComboBox<>();
-	Label ownerLabel1 = new Label("Owner Name");
-	TextField ownerTextField1 = new TextField();
-	Label emailLabel1 = new Label("E-mail");
-	TextField emailTextField1 = new TextField();
-	Label phoneLabel1 = new Label("Phone");
-	TextField phoneTextField1 = new TextField();
-
-	//dogInvoiceObjects
-	TextArea donateResultTextField = new TextArea();
-	
-	//dogAdoptSceneObjects
-	Label dogSizeLabel2 = new Label("Dog Size");
-	ComboBox<String> dogSizeComboBox2 = new ComboBox<>();
-	Label dogBreedLabel2 = new Label("Dog Breed");
-	ComboBox<String> dogBreedComboBox2 = new ComboBox<>();
-	Label dogGenderLabel2 = new Label("Dog Gender");
-	ComboBox<String> dogGenderCombobox2 = new ComboBox<>();
-	Label dogColorLabel2 = new Label("Dog Color");
-	ComboBox<String> dogColorComboBox2 = new ComboBox<>();
-	Label dogAgeLabel2 = new Label("Dog Age");
-	ComboBox<String> dogAgeComboBox2 = new ComboBox<>();
-	
-	//dogAdoptResultObjects
-	ComboBox<String> adoptDogListComboBox = new ComboBox<>();
-	TableView adoptDogTableView = new TableView();
-	TableColumn breedColumn = new TableColumn("Breed");
-	TableColumn genderColumn = new TableColumn("Gender");
-	TableColumn sizeColumn = new TableColumn("Size");
-	TableColumn colorColumn = new TableColumn("Color");
-	TableColumn ageColumn = new TableColumn("Age");
-	TableColumn ownerNameColumn = new TableColumn("Owner");
-	TableColumn emailColumn = new TableColumn("Email");
-	TableColumn phoneColumn = new TableColumn("Phone");
-	ObservableList<Dog> dogObservableList = FXCollections.observableArrayList();
-	Label adoptResultLabel = new Label("Search Results");
+	private adoptOrDonate choose1Scene = new adoptOrDonate();;
+	private adoptDog adoptDogScene = new adoptDog();;
+	private donateDog donateDogScene = new donateDog();;
+	private invoiceDisplay finishedTransaction = new invoiceDisplay();;
+	private resultDisplay adoptList = new resultDisplay();;
 	
 	// Setting for main program window
 	public GUI() {
 		this.setMaxSize(WIDTH, HEIGHT);
 		this.setMinSize(WIDTH, HEIGHT);
 		this.getStyleClass().add("body");
+		
 		createLogin();
-		createChooseScene();
-		createDonateDogScene();
-		createInvoiceScene();
-		createAdoptDogScene();
-		createAdoptDogResultScene();
+		
+		//adoptDog addition constructor
+		goToLoginScene(adoptDogScene.backToLoginButton);
+		goToAdoptDogResultScene(adoptDogScene.goToListButton);
+		
+		//adoptOrDonate addition constructor
+		goToDonateDogScene(choose1Scene.donateSceneButton);
+		goToAdoptDogScene(choose1Scene.adoptSceneButton);
+		goToLoginScene(choose1Scene.backToLoginButton);
+		
+		//donateDog addition constructor
+		goToLoginScene(donateDogScene.backToLoginButton1);
+		goToInvoiceScene(donateDogScene.goToInvoiceButton1, "donate", donateDogScene.dogBreedComboBox1.getSelectionModel().getSelectedItem(),
+				donateDogScene.dogGenderComboBox1.getSelectionModel().getSelectedItem(),
+				donateDogScene.dogSizeComboBox1.getSelectionModel().getSelectedItem(),
+				donateDogScene.dogColorComboBox1.getSelectionModel().getSelectedItem(),
+				donateDogScene.dogAgeComboBox1.getSelectionModel().getSelectedItem(), donateDogScene.ownerTextField1.getText().toString(),
+				donateDogScene.emailTextField1.getText().toString(), donateDogScene.phoneTextField1.getText().toString());
+		
+		//invoiceDisplay addition constructor
+		goToLoginScene(finishedTransaction.backToLoginButton);
+		
+		//resultDisplay addition constructor
+		goToLoginScene(adoptList.backToLoginButton2);
+		goToInvoiceScene(adoptList.goToInvoiceButton2,"adopt","","","","","","","", "");
+		
+		
+		
 		//setScene1BackGround();
 		setTitle();
 	}
@@ -138,296 +124,70 @@ public class GUI extends BorderPane {
 		gridPane.setHgap(5);
 		gridPane.setVgap(5);
 		gridPane.setAlignment(Pos.CENTER);
+		
+Rectangle r = new Rectangle(5,5,10,10);
+		
+		AnimationTimer t = new AnimationTimer() {
+			@Override
+			public void handle(long now) 
+				{
+				r.setRotate(r.getRotate() + 5);
+				r.setFill(Color.POWDERBLUE);
+				}
+			};//End AT
+			t.start();
 
-		Label username = new Label("User Name: ");
-		TextField inputName = new TextField("********");
+		Label username = new Label("\tUser Name: ");
+		username.setStyle("labels");
+		Label helpBox = new Label("\tForgot your Password? ");
+		helpBox.setUnderline(true);
+		Label signUp = new Label("\tNew User? Join Here! ");
+		TextField inputName = new TextField();
+		inputName.setPromptText("Username");
+		ImageView lockIcon = new ImageView();
+		ImageView guestIcon = new ImageView();
+		ImageView helpIcon = new ImageView();
+		
+//		http://i65.tinypic.com/vr3ku0.png (Lock Symbol)
+//		http://i68.tinypic.com/2wec87o.png (Question Mark)
+//		http://i66.tinypic.com/jtqjwy.png (User?)
+//		http://i66.tinypic.com/k0frdw.png (Paw)
+		Image lock = new Image("http://i65.tinypic.com/vr3ku0.png",50.0,30.0,true,true);
+		lockIcon.setImage(lock);
+		
+		Image help = new Image("http://i68.tinypic.com/2wec87o.png",30.0,30.0,true,true);
+		helpIcon.setImage(help);
+		
+		Image guest = new Image("http://i66.tinypic.com/jtqjwy.png",50.0,30.0,true,true);
+		guestIcon.setImage(guest);
+		
+		Label testingLabel = new Label("TEST");
 
-		Label password = new Label("Password: ");
-		TextField inputPass = new TextField("********");
+		Label password = new Label("\tPassword: ");
+		TextField inputPass = new TextField();
+		inputPass.setPromptText("Password");
 
 		gridPane.add(username, 0, 0);
+		gridPane.add(guestIcon,0,0);
+//		gridPane.add(r,8,8);
 		gridPane.add(inputName, 1, 0);
 		gridPane.add(password, 0, 1);
 		gridPane.add(inputPass, 1, 1);
+		gridPane.add(lockIcon, 0, 1);
+		gridPane.add(helpBox, 1, 3);
+		gridPane.add(helpIcon, 1	, 3);
+		gridPane.add(signUp, 1, 4);
+		gridPane.add(r, 1, 4);
 
 		Button loginButton = new Button("Login");
-		goToChooseScene(loginButton);
+		loginButton.setStyle("button");
+		goTochoose1Scene(loginButton);
 
 		loginScene.getChildren().addAll(gridPane, loginButton);
 
 		this.setCenter(loginScene);
 	}
-
-	// Create Scene 1 (Donate or Adopt Module)
-	public void createChooseScene() {
-		chooseScene = new VBox();
-
-		Button donateSceneButton = new Button("Donate a Dog");
-		goToDonateDogScene(donateSceneButton);
-		Button adoptSceneButton = new Button("Adopt a Dog");
-		goToAdoptDogScene(adoptSceneButton);
-		HBox donateOrAdoptHBox = new HBox();
-		donateOrAdoptHBox.getChildren().addAll(emptyVBoxPrinter(), donateSceneButton, emptyVBoxPrinter(), adoptSceneButton, emptyVBoxPrinter());
-		donateOrAdoptHBox.setAlignment(Pos.BASELINE_CENTER);
-
-		// Button and Label for going back to loginScene
-		Button backToLoginButton = new Button("Back to Login");
-		goToLoginScene(backToLoginButton);
-
-		HBox returnToLoginHBox = new HBox();
-		returnToLoginHBox.getChildren().addAll(backToLoginButton);
-		returnToLoginHBox.setAlignment(Pos.BASELINE_CENTER);
-
-		// All that is displayed is here
-		chooseScene.getChildren().addAll(emptyHBoxPrinter(),donateOrAdoptHBox, emptyHBoxPrinter(), returnToLoginHBox, emptyHBoxPrinter());
-		chooseScene.setAlignment(Pos.CENTER);
-		chooseScene.setAlignment(Pos.TOP_CENTER);
-	}
-
-	// Create Scene 2 (Donate a Dog Module) Need help to get this to display
-	public void createDonateDogScene() {
-		donateDogScene = new VBox();
-		
-		///1st Row
-		//Breed
-		dogBreedLabel1.setPrefWidth(100);
-		dogBreedComboBox1.getItems().addAll("");
-		String [] dogBreeds = readDogBreedsIntoArray("src\\DogBreeds.txt");
-		for(String breed: dogBreeds)
-		{
-			dogBreedComboBox1.getItems().add(breed);
-		}
-		dogBreedComboBox1.setPrefWidth(125);
-		dogBreedComboBox1.getSelectionModel().selectFirst();
-		dogBreedComboBox1.setVisibleRowCount(5);
-		//Gender
-		dogGenderLabel1.setPrefWidth(100);
-		dogGenderComboBox1.getItems().addAll("","Male","Female");
-		dogGenderComboBox1.setPrefWidth(125);
-		dogGenderComboBox1.getSelectionModel().selectFirst();
-		dogGenderComboBox1.setVisibleRowCount(5);
-		//Size
-		dogSizeLabel1.setPrefWidth(100);
-		dogSizeComboBox1.getItems().addAll("","Small","Medium","Large");
-		dogSizeComboBox1.setPrefWidth(125);
-		dogSizeComboBox1.getSelectionModel().selectFirst();
-		dogSizeComboBox1.setVisibleRowCount(5);
-		//Color
-		dogColorLabel1.setPrefWidth(100);
-		dogColorComboBox1.getItems().addAll("","Brown","Red","Gold","Yellow","Cream","Black","Blue","Gray","White");	
-		dogColorComboBox1.setPrefWidth(125);
-		dogColorComboBox1.getSelectionModel().selectFirst();
-		dogColorComboBox1.setVisibleRowCount(5);
-		
-		HBox dogBreedGenderSizeColorHBox = new HBox();
-		dogBreedGenderSizeColorHBox.getChildren().addAll(dogBreedLabel1, dogBreedComboBox1, emptyVBoxPrinter(),  
-				dogGenderLabel1, dogGenderComboBox1, emptyVBoxPrinter(), 
-				dogSizeLabel1, dogSizeComboBox1, emptyVBoxPrinter(), 
-				dogColorLabel1, dogColorComboBox1);
-		dogBreedGenderSizeColorHBox.setAlignment(Pos.BASELINE_CENTER);
 	
-		/// 2nd Row
-		//Age
-		dogAgeLabel1.setPrefWidth(100);
-		dogAgeComboBox1.getItems().add("");
-		for (int i = 1; i < 21; i++)
-		{
-			dogAgeComboBox1.getItems().add(Integer.toString(i));
-		}
-		dogAgeComboBox1.getSelectionModel().select("");
-		dogAgeComboBox1.setPrefWidth(125);
-		dogAgeComboBox1.getSelectionModel().selectFirst();
-		dogAgeComboBox1.setVisibleRowCount(5);
-		//OwnerName
-		ownerLabel1.setPrefWidth(100);
-		ownerTextField1.setPrefWidth(125);
-		//Email
-		emailLabel1.setPrefWidth(100);
-		emailTextField1.setPrefWidth(125);
-		//Phone
-		phoneLabel1.setPrefWidth(100);
-		phoneTextField1.setPrefWidth(125);
-		HBox dogAgeOwnerEmailPhoneHBox = new HBox();
-		dogAgeOwnerEmailPhoneHBox.getChildren().addAll(dogAgeLabel1,dogAgeComboBox1,emptyVBoxPrinter(), 
-				ownerLabel1,ownerTextField1,emptyVBoxPrinter(), 
-				emailLabel1,emailTextField1,emptyVBoxPrinter(), 
-				phoneLabel1,phoneTextField1);
-		dogAgeOwnerEmailPhoneHBox.setAlignment(Pos.BASELINE_CENTER);
-		
-		//CheckPoint
-		System.out.println(dogAgeComboBox1.getSelectionModel().getSelectedItem().toString()+dogBreedComboBox1.getSelectionModel().getSelectedItem().toString()+
-				dogGenderComboBox1.getSelectionModel().getSelectedItem().toString()+dogColorComboBox1.getSelectionModel().getSelectedItem().toString()+
-				dogAgeComboBox1.getSelectionModel().getSelectedItem().toString()+ownerTextField1.getText().toString()+
-				emailTextField1.getText().toString()+phoneTextField1.getText().toString()+"here");
-
-		/// 3rd Row Buttons
-		// Button and Label for going back to loginScene
-		Label backToLoginLabel1 = new Label("Back To Login");
-		Button backToLoginButton1 = new Button("Click Here!!");
-		goToLoginScene(backToLoginButton1);
-		// Button and Label for going to next Scene
-		Label goToInvoiceLabel1 = new Label("Go to Invoice");
-		Button goToInvoiceButton1 = new Button("Click Here!!");
-		goToInvoiceScene(goToInvoiceButton1, "donate",
-				dogBreedComboBox1.getSelectionModel().getSelectedItem(),dogGenderComboBox1.getSelectionModel().getSelectedItem(),
-				dogSizeComboBox1.getSelectionModel().getSelectedItem(),dogColorComboBox1.getSelectionModel().getSelectedItem(),
-				dogAgeComboBox1.getSelectionModel().getSelectedItem(),ownerTextField1.getText().toString(),
-				emailTextField1.getText().toString(),phoneTextField1.getText().toString());
-		HBox buttonsHBox = new HBox();
-		buttonsHBox.getChildren().addAll(emptyVBoxPrinter(),backToLoginLabel1, backToLoginButton1, 
-				emptyVBoxPrinter(), goToInvoiceLabel1, goToInvoiceButton1, emptyVBoxPrinter());
-		buttonsHBox.setAlignment(Pos.BASELINE_CENTER);
-
-		
-		
-		// All that is displayed is here
-		donateDogScene.getChildren().addAll(emptyHBoxPrinter(), dogBreedGenderSizeColorHBox, emptyHBoxPrinter(), dogAgeOwnerEmailPhoneHBox,
-				emptyHBoxPrinter(), buttonsHBox, emptyHBoxPrinter());
-		donateDogScene.setAlignment(Pos.CENTER);
-		donateDogScene.setAlignment(Pos.TOP_CENTER);
-		
-	}
-
-	// Create Scene 3 (Dog Invoice)
-	public void createInvoiceScene() {
-		donateInvoiceScene = new VBox();
-
-		donateResultTextField.setEditable(false);
-		donateResultTextField.setPrefHeight(550);
-		donateResultTextField.setPrefRowCount(9);
-		donateResultTextField.setPrefColumnCount(2);
-		donateResultTextField.setPrefWidth(100);
-		Button backToLoginButton = new Button("Back To Login");
-		backToLoginButton.setAlignment(Pos.CENTER);
-		goToLoginScene(backToLoginButton);
-		Button printInvoiceButton = new Button("Print Invoice");
-		printInvoiceButton.setAlignment(Pos.CENTER);
-		printInvoiceButton.setOnAction(e -> print(donateResultTextField));
-		
-		HBox buttonsHBox = new HBox();
-		buttonsHBox.getChildren().addAll(emptyVBoxPrinter(), backToLoginButton, emptyVBoxPrinter(), printInvoiceButton, emptyVBoxPrinter());
-		buttonsHBox.setAlignment(Pos.CENTER);
-
-		donateInvoiceScene.getChildren().addAll(donateResultTextField,buttonsHBox);
-	}
-	
-	// Create Scene 4 (Adopt Dog Module)
-	public void createAdoptDogScene() {
-		adoptDogScene = new VBox();
-		
-		//Size
-		dogSizeComboBox2.getItems().addAll("","Small","Medium","Large");
-		dogSizeComboBox2.setVisibleRowCount(5);
-		dogSizeComboBox2.getSelectionModel().select(0);
-		
-		//Breed
-		dogBreedComboBox2.getItems().addAll("");
-		String [] dogBreeds = readDogBreedsIntoArray("src\\DogBreeds.txt");
-		for(String breed: dogBreeds)
-		{
-			dogBreedComboBox2.getItems().add(breed);
-		}
-		dogBreedComboBox2.setVisibleRowCount(5);
-		dogBreedComboBox2.getSelectionModel().select(0);
-		
-		HBox dogSizeAndBreedHBox = new HBox();
-		dogSizeAndBreedHBox.getChildren().addAll( dogSizeLabel2, dogSizeComboBox2, emptyVBoxPrinter(),
-				dogBreedLabel2,  dogBreedComboBox2, emptyVBoxPrinter());
-		dogSizeAndBreedHBox.setAlignment(Pos.BASELINE_CENTER);
-		
-		//Gender
-		dogGenderCombobox2.getItems().addAll("","Male","Female");
-		dogGenderCombobox2.setVisibleRowCount(5);
-		dogGenderCombobox2.getSelectionModel().select(0);
-		
-		//Color
-		dogColorComboBox2.getItems().addAll("","Brown","Red","Gold","Yellow","Cream","Black","Blue","Gray","White");
-		dogColorComboBox2.setVisibleRowCount(5);
-		dogColorComboBox2.getSelectionModel().select(0);
-		
-		//Age
-		dogAgeComboBox2.getItems().add("");
-		for (int i = 1; i < 21; i++)
-		{
-			dogAgeComboBox2.getItems().add(Integer.toString(i));
-		}
-		dogAgeComboBox2.getSelectionModel().select("");
-		dogAgeComboBox2.setVisibleRowCount(5);
-		dogAgeComboBox2.getSelectionModel().select(0);
-		HBox dogGenderAndColorAndAgeHBox = new HBox();
-		dogGenderAndColorAndAgeHBox.getChildren().addAll(dogGenderLabel2, dogGenderCombobox2, emptyVBoxPrinter(), 
-				dogColorLabel2, dogColorComboBox2, emptyVBoxPrinter(),
-				dogAgeLabel2, dogAgeComboBox2, emptyVBoxPrinter());
-		dogGenderAndColorAndAgeHBox.setAlignment(Pos.BASELINE_CENTER);
-
-		
-		
-		// Button and Label for going back to loginScene
-		Label loginSceneLabel = new Label("Back To Login");
-		Button backToLoginButton = new Button("Click Here!!");
-		goToLoginScene(backToLoginButton);
-		// Button and Label for going to next Scene
-		Label goToListLabel = new Label("Go to List");
-		Button goToListButton = new Button("Click Here!!");
-		goToAdoptDogResultScene(goToListButton);
-		HBox buttonsHBox = new HBox();
-		buttonsHBox.getChildren().addAll(loginSceneLabel, backToLoginButton, 
-				emptyVBoxPrinter(), goToListLabel, goToListButton, emptyVBoxPrinter());
-		buttonsHBox.setAlignment(Pos.BASELINE_CENTER);
-
-		
-		// All that is displayed is here
-		adoptDogScene.getChildren().addAll(emptyHBoxPrinter(), dogSizeAndBreedHBox,
-				emptyHBoxPrinter(), dogGenderAndColorAndAgeHBox,
-				emptyHBoxPrinter(), buttonsHBox, emptyHBoxPrinter());
-		adoptDogScene.setAlignment(Pos.CENTER);
-		adoptDogScene.setAlignment(Pos.TOP_CENTER);
-	}	
-
-	// Create Scene 5 (Adopt a Dog Result Module)
-	public void createAdoptDogResultScene()
-	{
-
-
-		adoptDogResultScene = new VBox();
-		
-		breedColumn.setCellValueFactory(
-                new PropertyValueFactory<Dog, String>("breed"));
-		genderColumn.setCellValueFactory(
-                new PropertyValueFactory<Dog, String>("gender"));
-		sizeColumn.setCellValueFactory(
-                new PropertyValueFactory<Dog, String>("size"));
-		colorColumn.setCellValueFactory(
-                new PropertyValueFactory<Dog, String>("color"));
-		ageColumn.setCellValueFactory(
-                new PropertyValueFactory<Dog, String>("age"));
-		ownerNameColumn.setCellValueFactory(
-                new PropertyValueFactory<Dog, String>("ownerName"));
-		emailColumn.setCellValueFactory(
-                new PropertyValueFactory<Dog, String>("email"));
-		phoneColumn.setCellValueFactory(
-                new PropertyValueFactory<Dog, String>("phone"));
-		
-		Label backToLoginLabel2 = new Label("Back To Login");
-		Button backToLoginButton2 = new Button("Click Here!!");
-		goToLoginScene(backToLoginButton2);
-		Label goToInvoiceLabel2 = new Label("Go to Invoice");
-		Button goToInvoiceButton2 = new Button("Click Here!!");
-		goToInvoiceScene(goToInvoiceButton2,"adopt","","","","","","","", "");
-		
-		HBox buttonsHBox = new HBox();
-		buttonsHBox.getChildren().addAll(emptyVBoxPrinter(),backToLoginLabel2, backToLoginButton2, 
-				emptyVBoxPrinter(), goToInvoiceLabel2, goToInvoiceButton2, emptyVBoxPrinter());
-		buttonsHBox.setAlignment(Pos.BASELINE_CENTER);
-		
-		adoptDogTableView.setItems(dogObservableList);
-		adoptDogTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-		adoptDogTableView.getColumns().addAll(breedColumn,genderColumn,sizeColumn,colorColumn,ageColumn,ownerNameColumn,emailColumn,phoneColumn);
-		adoptDogResultScene.setSpacing(5);
-		adoptDogResultScene.setPadding(new Insets(10,0,0,10));
-		adoptDogResultScene.getChildren().addAll(adoptResultLabel,adoptDogTableView,buttonsHBox);
-	}
-
 	// Go to LoginScene
 	public void goToLoginScene(Button button) {
 		button.setOnAction(e -> {
@@ -436,36 +196,37 @@ public class GUI extends BorderPane {
 		});
 	}
 	
-	// Go to ChooseScene
-	private void goToChooseScene(Button button) {
+	// Go to choose1Scene
+	public void goTochoose1Scene(Button button) {
 		button.setOnAction(e -> {
-			this.setCenter(chooseScene);
+			this.setCenter(choose1Scene.chooseScene);
 		});
 	}
 
+	
 	// Go to DonateDogScene
-	private void goToDonateDogScene(Button button) {
+	public void goToDonateDogScene(Button button) {
 		button.setOnAction(e -> {
-			this.setCenter(donateDogScene);
+			this.setCenter(donateDogScene.donateDogScene);
 		});
 	}
 	
 	// Go to InvoiceScene
-	private void goToInvoiceScene(Button button, String choice,
+	public void goToInvoiceScene(Button button, String choice,
 			String breed, String gender, String size, String color, 
 			String age, String ownerName, String email, String phone) 
 	{
 		if (choice == "donate") {
-			donateResultTextField.setText("");
+			finishedTransaction.donateResultTextField.setText("");
 			button.setOnAction(e -> {
-				if (dogBreedComboBox1.getSelectionModel().getSelectedItem() == ""
-						|| dogGenderComboBox1.getSelectionModel().getSelectedItem() == ""
-						|| dogSizeComboBox1.getSelectionModel().getSelectedItem() == ""
-						|| dogColorComboBox1.getSelectionModel().getSelectedItem() == ""
-						|| dogAgeComboBox1.getSelectionModel().getSelectedItem() == ""
-						|| ownerTextField1.getText().toString() == "" 
-						|| emailTextField1.getText().toString() == ""
-						|| phoneTextField1.getText().toString() == "") {
+				if (donateDogScene.dogBreedComboBox1.getSelectionModel().getSelectedItem() == ""
+						|| donateDogScene.dogGenderComboBox1.getSelectionModel().getSelectedItem() == ""
+						|| donateDogScene.dogSizeComboBox1.getSelectionModel().getSelectedItem() == ""
+						|| donateDogScene.dogColorComboBox1.getSelectionModel().getSelectedItem() == ""
+						|| donateDogScene.dogAgeComboBox1.getSelectionModel().getSelectedItem() == ""
+						|| donateDogScene.ownerTextField1.getText().toString() == "" 
+						|| donateDogScene.emailTextField1.getText().toString() == ""
+						|| donateDogScene.phoneTextField1.getText().toString() == "") {
 					Alert alert0 = new Alert(Alert.AlertType.INFORMATION);
 					alert0.setTitle("Errors!!!");
 					alert0.setHeaderText(null);
@@ -473,19 +234,19 @@ public class GUI extends BorderPane {
 					alert0.showAndWait();
 
 				} else {
-					String phoneString = phoneTextField1.getText().toString();
+					String phoneString = donateDogScene.phoneTextField1.getText().toString();
 					String invoice = "Invoice: " + "\t\t\t" + String.format("%010d%n", invoiceNumber) + "Dog Breed:" + "\t\t\t"
-							+ dogBreedComboBox1.getSelectionModel().getSelectedItem() + "\n" + "Dog Gender:" + "\t\t"
-							+ dogSizeComboBox1.getSelectionModel().getSelectedItem() + "\n" + "Dog Gender:" + "\t\t"
-							+ dogGenderComboBox1.getSelectionModel().getSelectedItem() + "\n" + "Dog Color:" + "\t\t\t"
-							+ dogColorComboBox1.getSelectionModel().getSelectedItem() + "\n" + "Dog Age:" + "\t\t\t"
-							+ dogAgeComboBox1.getSelectionModel().getSelectedItem() + " Years Old" + "\n"
-							+ "Owner Name" + "\t\t" + ownerTextField1.getText().toString() + "\n" + "Email:" + "\t\t\t"
-							+ emailTextField1.getText().toString() + "\n" + "Owner's Phone #:" + "\t"
+							+ donateDogScene.dogBreedComboBox1.getSelectionModel().getSelectedItem() + "\n" + "Dog Gender:" + "\t\t"
+							+ donateDogScene.dogSizeComboBox1.getSelectionModel().getSelectedItem() + "\n" + "Dog Gender:" + "\t\t"
+							+ donateDogScene.dogGenderComboBox1.getSelectionModel().getSelectedItem() + "\n" + "Dog Color:" + "\t\t\t"
+							+ donateDogScene.dogColorComboBox1.getSelectionModel().getSelectedItem() + "\n" + "Dog Age:" + "\t\t\t"
+							+ donateDogScene.dogAgeComboBox1.getSelectionModel().getSelectedItem() + " Years Old" + "\n"
+							+ "Owner Name" + "\t\t" + donateDogScene.ownerTextField1.getText().toString() + "\n" + "Email:" + "\t\t\t"
+							+ donateDogScene.emailTextField1.getText().toString() + "\n" + "Owner's Phone #:" + "\t"
 							+ "(" + phoneString.substring(0,3) + ")-" + phoneString.substring(3,6) + "-" + phoneString.substring(6);
 
-					boolean phonePass = isRealPhoneNum(phoneTextField1.getText().toString());
-					boolean emailPass = isValidEmail(emailTextField1.getText().toString());
+					boolean phonePass = isRealPhoneNum(donateDogScene.phoneTextField1.getText().toString());
+					boolean emailPass = isValidEmail(donateDogScene.emailTextField1.getText().toString());
 					if (phonePass == false)
 					{
 						Alert alert1 = new Alert(Alert.AlertType.INFORMATION);
@@ -504,15 +265,16 @@ public class GUI extends BorderPane {
 					}
 
 					if (emailPass == true && phonePass == true) {
-						donateResultTextField.setText(invoice);
-						this.setCenter(donateInvoiceScene);
-						insertIntoDataBase(dogBreedComboBox1.getSelectionModel().getSelectedItem(),
-								dogGenderComboBox1.getSelectionModel().getSelectedItem(),
-								dogSizeComboBox1.getSelectionModel().getSelectedItem(),
-								dogColorComboBox1.getSelectionModel().getSelectedItem(),
-								dogAgeComboBox1.getSelectionModel().getSelectedItem(),
-								ownerTextField1.getText().toString(), emailTextField1.getText().toString(),
-								phoneTextField1.getText().toString());
+						finishedTransaction.donateResultTextField.setText(invoice);
+						this.setCenter(finishedTransaction.donateInvoiceScene);
+						insertIntoDataBase(donateDogScene.dogBreedComboBox1.getSelectionModel().getSelectedItem(),
+								donateDogScene.dogGenderComboBox1.getSelectionModel().getSelectedItem(),
+								donateDogScene.dogSizeComboBox1.getSelectionModel().getSelectedItem(),
+								donateDogScene.dogColorComboBox1.getSelectionModel().getSelectedItem(),
+								donateDogScene.dogAgeComboBox1.getSelectionModel().getSelectedItem(),
+								donateDogScene.ownerTextField1.getText().toString(), 
+								donateDogScene.emailTextField1.getText().toString(),
+								donateDogScene.phoneTextField1.getText().toString());
 						
 						overWriteInvoice(invoiceNumber);
 						invoiceNumber++;
@@ -524,7 +286,7 @@ public class GUI extends BorderPane {
 		{
 
 			button.setOnAction(e -> {
-				Dog k9 = (Dog) adoptDogTableView.getSelectionModel().getSelectedItem();
+				Dog k9 = (Dog) adoptList.adoptDogTableView.getSelectionModel().getSelectedItem();
 				String phoneString = k9.getPhone().toString();
 				System.out.println(k9.getBreed());
 				System.out.println(k9.getGender());
@@ -545,12 +307,12 @@ public class GUI extends BorderPane {
 						+ k9.getEmail() + "\n" + "Owner's Phone #:" + "\t"
 						+ "(" + phoneString.substring(0,3) + ")-" + phoneString.substring(3,6) + "-" + phoneString.substring(6);
 
-				donateResultTextField.setText(invoice);
+				finishedTransaction.donateResultTextField.setText(invoice);
 				
 				deleteFromDataBase(k9.getBreed(), k9.getGender(), k9.getSize(), k9.getColor(), 
 						k9.getAge(),k9.getOwnerName(),k9.getEmail(),k9.getPhone());
 				
-				this.setCenter(donateInvoiceScene);
+				this.setCenter(finishedTransaction.donateInvoiceScene);
 				
 				overWriteInvoice(invoiceNumber);
 				invoiceNumber++;
@@ -559,41 +321,41 @@ public class GUI extends BorderPane {
 	}
 	
 	// Go to AdoptDogScene
-	private void goToAdoptDogScene(Button button) {
+	public void goToAdoptDogScene(Button button) {
 		button.setOnAction(e -> {
-			this.setCenter(adoptDogScene);		
+			this.setCenter(adoptDogScene.adoptDogScene);		
 		});
 	}
 
 	//Go to AdoptDogResultScene
-	private void goToAdoptDogResultScene(Button button) {
+	public void goToAdoptDogResultScene(Button button) {
 		button.setOnAction(e -> {
-			selectFromDatabase(dogBreedComboBox2.getSelectionModel().getSelectedItem()
-					, dogGenderCombobox2.getSelectionModel().getSelectedItem()
-					, dogSizeComboBox2.getSelectionModel().getSelectedItem()
-					, dogColorComboBox2.getSelectionModel().getSelectedItem()
-					, dogAgeComboBox2.getSelectionModel().getSelectedItem() 
+			selectFromDatabase(adoptDogScene.dogBreedComboBox2.getSelectionModel().getSelectedItem()
+					, adoptDogScene.dogGenderCombobox2.getSelectionModel().getSelectedItem()
+					, adoptDogScene.dogSizeComboBox2.getSelectionModel().getSelectedItem()
+					, adoptDogScene.dogColorComboBox2.getSelectionModel().getSelectedItem()
+					, adoptDogScene.dogAgeComboBox2.getSelectionModel().getSelectedItem() 
 					);
-			this.setCenter(adoptDogResultScene);		
+			this.setCenter(adoptList.adoptDogResultScene);		
 		});
 	}
 	
 	//Erase adopt and donate form
-	private void eraseBothForms() {
-		dogBreedComboBox1.getSelectionModel().selectFirst();
-		dogGenderComboBox1.getSelectionModel().selectFirst();
-		dogSizeComboBox1.getSelectionModel().selectFirst();
-		dogColorComboBox1.getSelectionModel().selectFirst();
-		dogAgeComboBox1.getSelectionModel().selectFirst();
-		ownerTextField1.setText("");
-		emailTextField1.setText("");
-		phoneTextField1.setText("");
+	public void eraseBothForms() {
+		donateDogScene.dogBreedComboBox1.getSelectionModel().selectFirst();
+		donateDogScene.dogGenderComboBox1.getSelectionModel().selectFirst();
+		donateDogScene.dogSizeComboBox1.getSelectionModel().selectFirst();
+		donateDogScene.dogColorComboBox1.getSelectionModel().selectFirst();
+		donateDogScene.dogAgeComboBox1.getSelectionModel().selectFirst();
+		donateDogScene.ownerTextField1.setText("");
+		donateDogScene.emailTextField1.setText("");
+		donateDogScene.phoneTextField1.setText("");
 
-		dogBreedComboBox2.getSelectionModel().selectFirst();
-		dogGenderCombobox2.getSelectionModel().selectFirst();
-		dogSizeComboBox2.getSelectionModel().selectFirst();
-		dogColorComboBox2.getSelectionModel().selectFirst();
-		dogAgeComboBox2.getSelectionModel().selectFirst();
+		adoptDogScene.dogBreedComboBox2.getSelectionModel().selectFirst();
+		adoptDogScene.dogGenderCombobox2.getSelectionModel().selectFirst();
+		adoptDogScene.dogSizeComboBox2.getSelectionModel().selectFirst();
+		adoptDogScene.dogColorComboBox2.getSelectionModel().selectFirst();
+		adoptDogScene.dogAgeComboBox2.getSelectionModel().selectFirst();
 	}
 	
 	// Reset HorizontalBox for new Image
@@ -617,7 +379,8 @@ public class GUI extends BorderPane {
 	}
 	
 	// Insert new Dog profile into database
-	public void insertIntoDataBase(String breed, String gender, String size, String color, 
+	@SuppressWarnings("unused")
+	public static void insertIntoDataBase(String breed, String gender, String size, String color, 
 			String age, String ownerName, String email, String phone)
 	{	
 		
@@ -687,10 +450,11 @@ public class GUI extends BorderPane {
 	}
 
 	// Select statement on Database from Adopting Dog
+	@SuppressWarnings("unused")
 	public void selectFromDatabase(String breed, String gender, String size, String color, 
 			String age)
 	{	
-		dogObservableList.clear();
+		adoptList.dogObservableList.clear();
 		int numberOfFilters = 0;
 		numberOfFilters = numberOfFilters();
 		
@@ -698,7 +462,7 @@ public class GUI extends BorderPane {
 		{
 			System.out.println("Connecting to jdbc.");
 			System.out.println(numberOfFilters + "from select");
-			System.out.println(dogAgeComboBox2.getSelectionModel().getSelectedItem());
+			System.out.println(adoptDogScene.dogAgeComboBox2.getSelectionModel().getSelectedItem());
 			
 			//Needed to connect to mysql
 			Class.forName("com.mysql.jdbc.Driver");
@@ -720,7 +484,7 @@ public class GUI extends BorderPane {
 			 */
 			{
 				command += " where";
-				if (dogSizeComboBox2.getSelectionModel().getSelectedIndex() != 0 && numberOfFilters !=0) {
+				if (adoptDogScene.dogSizeComboBox2.getSelectionModel().getSelectedIndex() != 0 && numberOfFilters !=0) {
 					command += " size = " + "\'" + size + "\'";
 					numberOfFilters--;
 					if (numberOfFilters <= 0) {
@@ -730,7 +494,7 @@ public class GUI extends BorderPane {
 					}
 
 				}
-				if (dogBreedComboBox2.getSelectionModel().getSelectedIndex() != 0 && numberOfFilters !=0) {
+				if (adoptDogScene.dogBreedComboBox2.getSelectionModel().getSelectedIndex() != 0 && numberOfFilters !=0) {
 					command += " breed = " + "\'" + breed + "\'";
 					numberOfFilters--;
 					if (numberOfFilters <= 0) {
@@ -739,7 +503,7 @@ public class GUI extends BorderPane {
 						command += " AND";
 					}
 				}
-				if (dogGenderCombobox2.getSelectionModel().getSelectedIndex() != 0 && numberOfFilters !=0) {
+				if (adoptDogScene.dogGenderCombobox2.getSelectionModel().getSelectedIndex() != 0 && numberOfFilters !=0) {
 					command += " gender = " + "\'" + gender + "\'";
 					numberOfFilters--;
 					if (numberOfFilters <= 0) {
@@ -748,7 +512,7 @@ public class GUI extends BorderPane {
 						command += " AND";
 					}
 				}
-				if (dogColorComboBox2.getSelectionModel().getSelectedIndex() != 0 && numberOfFilters !=0) {
+				if (adoptDogScene.dogColorComboBox2.getSelectionModel().getSelectedIndex() != 0 && numberOfFilters !=0) {
 					command += " color = " + "\'" + color + "\'";
 					numberOfFilters--;
 					if (numberOfFilters <= 0) {
@@ -757,7 +521,7 @@ public class GUI extends BorderPane {
 						command += " AND";
 					}
 				}
-				if (dogAgeComboBox2.getSelectionModel().getSelectedIndex() != 0 && numberOfFilters !=0) {
+				if (adoptDogScene.dogAgeComboBox2.getSelectionModel().getSelectedIndex() != 0 && numberOfFilters !=0) {
 					command += " age = " + "\'" + age + "\'";
 					numberOfFilters--;
 					if (numberOfFilters <= 0) {
@@ -795,7 +559,7 @@ public class GUI extends BorderPane {
 					
 					while (rs.next())
 					{
-						dogObservableList.add(new Dog(rs.getString("breed"),rs.getString("gender"),rs.getString("size"),rs.getString("color"),
+						adoptList.dogObservableList.add(new Dog(rs.getString("breed"),rs.getString("gender"),rs.getString("size"),rs.getString("color"),
 								rs.getString("age"),rs.getString("ownerName"),rs.getString("email"),rs.getString("phone")));
 						String result = rs.getString("breed") + " " + rs.getString("gender") + " " + rs.getString("size") + " " + rs.getString("color") + " " + 
 								rs.getString("age") + " " + rs.getString("ownerName") + " " + rs.getString("email") + " " + rs.getString("phone");
@@ -845,10 +609,11 @@ public class GUI extends BorderPane {
 	}
 	
 	// Delete new Dog profile into database
+	@SuppressWarnings("unused")
 	public void deleteFromDataBase(String breed, String gender, String size, String color, 
 			String age, String ownerName, String email, String phone)
 	{	
-		Dog k9 = (Dog) adoptDogTableView.getSelectionModel().getSelectedItem();
+		Dog k9 = (Dog) adoptList.adoptDogTableView.getSelectionModel().getSelectedItem();
 		System.out.println(k9.getBreed());
 		System.out.println(k9.getGender());
 		System.out.println(k9.getSize());
@@ -1001,7 +766,7 @@ public class GUI extends BorderPane {
 	}
 
 	// Return empty Horizontal Box
-	public HBox emptyHBoxPrinter() {
+	public static HBox emptyHBoxPrinter() {
 		HBox emptyBox = new HBox(8);
 		emptyBox.setAlignment(Pos.BASELINE_CENTER);
 		emptyBox.getChildren().addAll(new Label());
@@ -1011,7 +776,7 @@ public class GUI extends BorderPane {
 	}
 
 	// Return empty Vertical Box
-	public VBox emptyVBoxPrinter() {
+	public static VBox emptyVBoxPrinter() {
 		VBox emptyBox = new VBox(8);
 		emptyBox.setAlignment(Pos.BASELINE_CENTER);
 		emptyBox.getChildren().addAll(new Label());
@@ -1036,11 +801,19 @@ public class GUI extends BorderPane {
 	public void setTitle() {
 		VBox loginVBox = new VBox();
 
-		Label title = new Label("PawPrint");
+		Label title = new Label();
 		// title.getStyleClass().add("title");
 
-		Label description = new Label("Make a dog happy!");
+		Label description = new Label();
+		//INSERT PAW HERE
+		BackgroundImage myBI = new BackgroundImage(new Image("http://i66.tinypic.com/k0frdw.png",
+				 30, 30, false, true),
+				 BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
+				 BackgroundPosition.CENTER, BackgroundSize.DEFAULT);
 
+				 loginVBox.setBackground(new Background(myBI));
+
+		
 		loginVBox.getChildren().addAll(title, description);
 		loginVBox.setAlignment(Pos.CENTER);
 
@@ -1069,7 +842,7 @@ public class GUI extends BorderPane {
 	}
 	
 	// Read in list of dog breeds into array
-	public String[] readDogBreedsIntoArray(String filename)
+	public static String[] readDogBreedsIntoArray(String filename)
 	    {
 	        FileReader fileReader = null;
 			try {
@@ -1107,41 +880,41 @@ public class GUI extends BorderPane {
 	public int numberOfFilters()
 	{
 		int numOfFilters = 0;
-		if(dogSizeComboBox2.getSelectionModel().isSelected(0) == false)
+		if(adoptDogScene.dogSizeComboBox2.getSelectionModel().isSelected(0) == false)
 		{
 			System.out.println("size");
-			System.out.println(dogSizeComboBox2.getSelectionModel().getSelectedIndex());
+			System.out.println(adoptDogScene.dogSizeComboBox2.getSelectionModel().getSelectedIndex());
 			numOfFilters++;
 		}
-		if(dogBreedComboBox2.getSelectionModel().isSelected(0) == false)
+		if(adoptDogScene.dogBreedComboBox2.getSelectionModel().isSelected(0) == false)
 		{
 			System.out.println("breed");
-			System.out.println(dogBreedComboBox2.getSelectionModel().getSelectedIndex());
+			System.out.println(adoptDogScene.dogBreedComboBox2.getSelectionModel().getSelectedIndex());
 			numOfFilters++;
 		}
-		if(dogGenderCombobox2.getSelectionModel().isSelected(0) == false)
+		if(adoptDogScene.dogGenderCombobox2.getSelectionModel().isSelected(0) == false)
 		{
 			System.out.println("gender");
-			System.out.println(dogGenderCombobox2.getSelectionModel().getSelectedIndex());
+			System.out.println(adoptDogScene.dogGenderCombobox2.getSelectionModel().getSelectedIndex());
 			numOfFilters++;
 		}
-		if(dogColorComboBox2.getSelectionModel().isSelected(0) == false)
+		if(adoptDogScene.dogColorComboBox2.getSelectionModel().isSelected(0) == false)
 		{
 			System.out.println("color");
-			System.out.println(dogColorComboBox2.getSelectionModel().getSelectedIndex());
+			System.out.println(adoptDogScene.dogColorComboBox2.getSelectionModel().getSelectedIndex());
 			numOfFilters++;
 		}
-		if(dogAgeComboBox2.getSelectionModel().isSelected(0) == false)
+		if(adoptDogScene.dogAgeComboBox2.getSelectionModel().isSelected(0) == false)
 		{
 			System.out.println("age");
-			System.out.println(dogAgeComboBox2.getSelectionModel().getSelectedIndex());
+			System.out.println(adoptDogScene.dogAgeComboBox2.getSelectionModel().getSelectedIndex());
 			numOfFilters++;
 		}
 		System.out.println(numOfFilters + "from function");
 		return numOfFilters;
 	}
 	
-	public boolean isRealPhoneNum(String num)
+	public static boolean isRealPhoneNum(String num)
 	{
 		boolean numIsDigit = true;
 		System.out.println(num);
@@ -1163,37 +936,37 @@ public class GUI extends BorderPane {
 	    return numIsDigit;
 	}
 	
-    public static boolean isValidEmail(String email) 
-    { 
-        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+ 
-                            "[a-zA-Z0-9_+&*-]+)*@" + 
-                            "(?:[a-zA-Z0-9-]+\\.)+[a-z" + 
-                            "A-Z]{2,7}$"; 
-                              
-        Pattern pat = Pattern.compile(emailRegex); 
-        if (email == null) 
-            return false; 
-        return pat.matcher(email).matches(); 
-    } 
-    
-    private void print(Node node) {
-        System.out.println("Creating a printer job...");
+  public static boolean isValidEmail(String email) 
+  { 
+      String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+ 
+                          "[a-zA-Z0-9_+&*-]+)*@" + 
+                          "(?:[a-zA-Z0-9-]+\\.)+[a-z" + 
+                          "A-Z]{2,7}$"; 
+                            
+      Pattern pat = Pattern.compile(emailRegex); 
+      if (email == null) 
+          return false; 
+      return pat.matcher(email).matches(); 
+  } 
+  
+  public static void print(Node node) {
+      System.out.println("Creating a printer job...");
 
-        PrinterJob job = PrinterJob.createPrinterJob();
-        if (job != null && job.showPrintDialog(node.getScene().getWindow())){
-            boolean success = job.printPage(node);
-            if (success) {
-                job.endJob();
-            }
-        }
+      PrinterJob job = PrinterJob.createPrinterJob();
+      if (job != null && job.showPrintDialog(node.getScene().getWindow())){
+          boolean success = job.printPage(node);
+          if (success) {
+              job.endJob();
+          }
       }
-    
-	public int readInvoiceFile() {
+    }
+  
+	public static int readInvoiceFile() {
 		int setInvoiceNumber = 0;
 
 		FileReader fileReader = null;
 		try {
-			fileReader = new FileReader("src\\Invoice.txt");
+			fileReader = new FileReader("src/Invoice.txt");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1231,13 +1004,13 @@ public class GUI extends BorderPane {
 		return setInvoiceNumber;
 	}
 	
-	public void overWriteInvoice(int Invoice)
+	public static void overWriteInvoice(int Invoice)
 	{
-		File fold=new File("src\\Invoice.txt");
+		File fold=new File("src/Invoice.txt");
 		fold.delete();
-		File fnew=new File("src\\Invoice.txt");
+		File fnew=new File("src/Invoice.txt");
 		String source = Integer.toString(invoiceNumber);
-		System.out.println(source);
+//		System.out.println(source);
 
 		try {
 		    FileWriter f2 = new FileWriter(fnew, false);
@@ -1247,4 +1020,6 @@ public class GUI extends BorderPane {
 		    e.printStackTrace();
 		}        
 	}
+	
 }
+
